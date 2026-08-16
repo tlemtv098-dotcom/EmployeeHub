@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{{ employee.full_name }} | EmployeeHub{% endblock %}
+{% block heading %}ข้อมูลพนักงาน{% endblock %}
+{% block content %}
+<div class="detail-grid">
+<section class="panel profile-panel">
+    <div class="profile-top">
+        {% if employee.photo %}<img class="profile-photo" src="{{ employee.photo.url }}" alt="{{ employee.full_name }}">{% else %}<div class="avatar profile-avatar">{{ employee.first_name|first }}</div>{% endif %}
+        <div><span class="badge {{ employee.status }}">{{ employee.get_status_display }}</span><h2>{{ employee.full_name }}</h2><p>{{ employee.get_department_display }}</p></div>
+    </div>
+    <div class="detail-actions"><a class="primary-btn" href="{% url 'employee_update' employee.pk %}">แก้ไขข้อมูล</a><a class="danger-btn" href="{% url 'employee_delete' employee.pk %}">ลบข้อมูล</a></div>
+</section>
+<section class="panel">
+    <div class="panel-head"><div><h3>รายละเอียด</h3><p>ข้อมูลประจำตัวและข้อมูลติดต่อ</p></div></div>
+    <div class="detail-list">
+        <div><span>ชื่อ-นามสกุล</span><strong>{{ employee.full_name }}</strong></div>
+        <div><span>เพศ</span><strong>{{ employee.get_gender_display }}</strong></div>
+        <div><span>วันเกิด</span><strong>{{ employee.birth_date|date:"d/m/Y" }}</strong></div>
+        <div><span>อีเมล</span><strong>{{ employee.email|default:"-" }}</strong></div>
+        <div><span>เบอร์โทร</span><strong>{{ employee.phone|default:"-" }}</strong></div>
+        <div><span>เงินเดือน</span><strong>{{ employee.salary|floatformat:2 }} บาท</strong></div>
+        <div class="full-span"><span>ที่อยู่</span><strong>{{ employee.address|default:"-" }}</strong></div>
+    </div>
+</section>
+</div>
+{% endblock %}

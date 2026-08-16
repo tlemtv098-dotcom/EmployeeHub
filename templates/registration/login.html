@@ -1,0 +1,27 @@
+{% load static %}
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>เข้าสู่ระบบ | EmployeeHub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body class="login-page">
+<div class="login-card">
+    <div class="login-brand"><div class="brand-mark">EH</div><h1>EmployeeHub</h1></div>
+    <p class="login-subtitle">เข้าสู่ระบบจัดการข้อมูลพนักงาน</p>
+    {% if form.errors %}<div class="alert">ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง</div>{% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <label>ชื่อผู้ใช้</label>
+        <input type="text" name="username" autofocus required>
+        <label>รหัสผ่าน</label>
+        <input type="password" name="password" required>
+        <button class="primary-btn full" type="submit">เข้าสู่ระบบ</button>
+    </form>
+</div>
+</body>
+</html>

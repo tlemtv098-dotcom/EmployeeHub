@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}ยืนยันการลบ | EmployeeHub{% endblock %}
+{% block heading %}ลบข้อมูลพนักงาน{% endblock %}
+{% block content %}
+<div class="panel confirm-panel">
+    <div class="warning-icon">!</div>
+    <h2>ต้องการลบข้อมูล {{ employee.full_name }} ใช่หรือไม่?</h2>
+    <p>ข้อมูลนี้จะถูกลบออกจากระบบและไม่สามารถกู้คืนได้</p>
+    <form method="post">{% csrf_token %}<a class="outline-btn" href="{{ employee.get_absolute_url }}">ยกเลิก</a><button class="danger-btn" type="submit">ยืนยันการลบ</button></form>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}รายชื่อพนักงาน | EmployeeHub{% endblock %}
+{% block heading %}รายชื่อพนักงาน{% endblock %}
+{% block content %}
+<div class="panel">
+    <form class="filter-bar" method="get">
+        <div class="search-box"><span>⌕</span><input name="q" value="{{ query }}" placeholder="ค้นหาชื่อ นามสกุล อีเมล หรือเบอร์โทร..."></div>
+        <select name="department"><option value="">ทุกแผนก</option>{% for value,label in department_choices %}<option value="{{ value }}" {% if selected_department == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+        <select name="status"><option value="">ทุกสถานะ</option>{% for value,label in status_choices %}<option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+        <button class="primary-btn" type="submit">ค้นหา</button>
+    </form>
+
+    <div class="table-wrap">
+    <table>
+        <thead><tr><th>พนักงาน</th><th>แผนก</th><th>เพศ</th><th>เงินเดือน</th><th>สถานะ</th><th></th></tr></thead>
+        <tbody>
+        {% for employee in page_obj %}
+        <tr>
+            <td><a class="person" href="{{ employee.get_absolute_url }}">{% if employee.photo %}<img src="{{ employee.photo.url }}" alt="">{% else %}<div class="avatar">{{ employee.first_name|first }}</div>{% endif %}<span><strong>{{ employee.full_name }}</strong><small>{{ employee.email|default:"ไม่ระบุอีเมล" }}</small></span></a></td>
+            <td>{{ employee.get_department_display }}</td>
+            <td>{{ employee.get_gender_display }}</td>
+            <td>{{ employee.salary|floatformat:2 }} ฿</td>
+            <td><span class="badge {{ employee.status }}">{{ employee.get_status_display }}</span></td>
+            <td><a class="more" href="{{ employee.get_absolute_url }}">รายละเอียด</a></td>
+        </tr>
+        {% empty %}<tr><td colspan="6"><div class="empty">ไม่พบข้อมูลที่ค้นหา</div></td></tr>{% endfor %}
+        </tbody>
+    </table>
+    </div>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}<a href="?q={{ query }}&department={{ selected_department }}&status={{ selected_status }}&page={{ page_obj.previous_page_number }}">‹ ก่อนหน้า</a>{% endif %}
+        <span>หน้า {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}<a href="?q={{ query }}&department={{ selected_department }}&status={{ selected_status }}&page={{ page_obj.next_page_number }}">ถัดไป ›</a>{% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

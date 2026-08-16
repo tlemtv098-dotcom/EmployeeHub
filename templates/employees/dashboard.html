@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}ภาพรวม | EmployeeHub{% endblock %}
+{% block heading %}ภาพรวมระบบ{% endblock %}
+{% block content %}
+<section class="welcome">
+    <div>
+        <p class="eyebrow">ยินดีต้อนรับกลับ</p>
+        <h2>จัดการข้อมูลบุคลากรได้ในที่เดียว</h2>
+        <p>เพิ่ม ค้นหา แก้ไข และตรวจสอบข้อมูลพนักงานอย่างเป็นระบบ</p>
+    </div>
+    <a class="outline-btn" href="{% url 'employee_list' %}">ดูรายชื่อทั้งหมด →</a>
+</section>
+
+<div class="stats-grid">
+    <div class="stat-card"><span class="stat-icon">♙</span><div><small>พนักงานทั้งหมด</small><strong>{{ total_employees }}</strong><span>คน</span></div></div>
+    <div class="stat-card"><span class="stat-icon green">✓</span><div><small>กำลังทำงาน</small><strong>{{ active_employees }}</strong><span>คน</span></div></div>
+    <div class="stat-card"><span class="stat-icon orange">◷</span><div><small>ลางาน</small><strong>{{ leave_employees }}</strong><span>คน</span></div></div>
+    <div class="stat-card"><span class="stat-icon purple">▦</span><div><small>จำนวนแผนก</small><strong>{{ departments }}</strong><span>แผนก</span></div></div>
+</div>
+
+<section class="panel">
+    <div class="panel-head"><div><h3>พนักงานที่เพิ่มล่าสุด</h3><p>รายการข้อมูลล่าสุดในระบบ</p></div><a href="{% url 'employee_list' %}" class="text-link">ดูทั้งหมด</a></div>
+    <div class="employee-cards">
+        {% for employee in recent_employees %}
+        <a class="employee-card" href="{{ employee.get_absolute_url }}">
+            {% if employee.photo %}<img src="{{ employee.photo.url }}" alt="{{ employee.full_name }}">{% else %}<div class="avatar large">{{ employee.first_name|first }}</div>{% endif %}
+            <div><strong>{{ employee.full_name }}</strong><span>{{ employee.get_department_display }}</span><small>{{ employee.get_status_display }}</small></div>
+        </a>
+        {% empty %}<div class="empty">ยังไม่มีข้อมูลพนักงาน <a href="{% url 'employee_create' %}">เพิ่มคนแรก</a></div>{% endfor %}
+    </div>
+</section>
+{% endblock %}

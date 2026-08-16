@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} | EmployeeHub{% endblock %}
+{% block heading %}{{ title }}{% endblock %}
+{% block content %}
+<form method="post" enctype="multipart/form-data" class="form-layout">
+{% csrf_token %}
+{% if form.non_field_errors %}<div class="alert">{{ form.non_field_errors }}</div>{% endif %}
+<section class="panel form-panel">
+    <div class="panel-head"><div><h3>ข้อมูลส่วนตัว</h3><p>กรอกข้อมูลให้ครบถ้วนเพื่อให้ง่ายต่อการจัดการ</p></div></div>
+    <div class="form-grid">
+        <div class="field">{{ form.first_name.label_tag }}{{ form.first_name }}{{ form.first_name.errors }}</div>
+        <div class="field">{{ form.last_name.label_tag }}{{ form.last_name }}{{ form.last_name.errors }}</div>
+        <div class="field full-span">{{ form.address.label_tag }}{{ form.address }}{{ form.address.errors }}</div>
+        <div class="field">{{ form.gender.label_tag }}{{ form.gender }}</div>
+        <div class="field">{{ form.birth_date.label_tag }}{{ form.birth_date }}</div>
+        <div class="field">{{ form.email.label_tag }}{{ form.email }}</div>
+        <div class="field">{{ form.phone.label_tag }}{{ form.phone }}</div>
+    </div>
+</section>
+
+<section class="panel form-panel">
+    <div class="panel-head"><div><h3>ข้อมูลการทำงาน</h3><p>ข้อมูลที่เกี่ยวข้องกับตำแหน่งและค่าตอบแทน</p></div></div>
+    <div class="form-grid">
+        <div class="field">{{ form.department.label_tag }}{{ form.department }}</div>
+        <div class="field">{{ form.status.label_tag }}{{ form.status }}</div>
+        <div class="field">{{ form.salary.label_tag }}{{ form.salary }}</div>
+        <div class="field">{{ form.photo.label_tag }}{{ form.photo }}</div>
+    </div>
+</section>
+
+<div class="form-actions">
+    <a class="outline-btn" href="{% if employee %}{{ employee.get_absolute_url }}{% else %}{% url 'employee_list' %}{% endif %}">ยกเลิก</a>
+    <button class="primary-btn" type="submit">{{ button_text }}</button>
+</div>
+</form>
+{% endblock %}
