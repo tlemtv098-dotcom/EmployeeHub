@@ -16,6 +16,11 @@ render_host = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
 if render_host:
     ALLOWED_HOSTS.append(render_host)
 
+CSRF_TRUSTED_ORIGINS = []
+if render_host:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{render_host}")
+    CSRF_TRUSTED_ORIGINS.append(f"https://{render_host}:443")
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
