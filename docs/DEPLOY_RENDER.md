@@ -1,59 +1,68 @@
-# คู่มือ Deploy EmployeeHub ขึ้น Render (Blueprint)
+# คู่มือ Deploy EmployeeHub ขึ้น Render
 
-> ทำตามทีละขั้น กดตามได้เลย - ใช้ `render.yaml` ที่มีใน repo
+> มี 2 วิธี - Blueprint ต้องใช้บัตรเครดิต, **Manual Web Service ไม่ต้อง** (แนะนำตอนนี้)
 
-## 1. เช็คโค้ดบน GitHub
-- เปิด https://github.com/tlemtv098-dotcom/EmployeeHub
-- ต้องเห็น commit ล่าสุด `Render hardening: idempotent build.sh...` (00dd7cc)
-- ถ้ายังไม่เห็น = push ไม่สำเร็จ ให้รัน `git push origin main` อีกรอบ
+## วิธี A: Manual Web Service (แนะนำ - ไม่ขอบัตร)
 
-## 2. สร้าง Blueprint บน Render
-1. เข้า https://dashboard.render.com -> **New +** -> **Blueprint**
-2. Connect repo `tlemtv098-dotcom/EmployeeHub` (ถ้ายังไม่ connect ให้ Authorize GitHub)
-3. Render จะอ่าน `render.yaml` เจอ 2 อย่าง:
-   - **web** `employee-hub-kpru` (Python, build `./build.sh`, start `gunicorn config.wsgi:application`)
-   - **database** `employee-hub-db` (Postgres free)
-4. กด **Apply** -> รอ Render สร้างทั้งคู่
+### 1. เช็คโค้ดบน GitHub
+- https://github.com/tlemtv098-dotcom/EmployeeHub ต้องเห็น commit `ca7e454` ขึ้นไป
 
-> ถ้าชื่อ `employee-hub-kpru` ซ้ำ (เคยสร้างแล้ว) ให้ลบ service เก่าก่อน หรือแก้ `name` ใน `render.yaml` แล้ว push ใหม่
+### 2. สร้าง PostgreSQL ก่อน
+1. Dashboard -> New+ -> **PostgreSQL**
+2. Name: `employee-hub-db` | Plan: **Free** | Create
+3. รอ Status `Available` -> ก็อปปี้ **Internal Database URL** ไว้
 
-## 3. ดู Build Log
-- หน้า Dashboard -> เลือก `employee-hub-kpru` -> **Logs**
-- ต้องเห็น:
+### 3. สร้าง Web Service
+1. New+ -> **Web Service** -> Connect repo `tlemtv098-dotcom/EmployeeHub` branch `main`
+2. ตั้งค่า:
+   - Name: `employee-hub-kpru` (หรือชื่ออะไรก็ได้)
+   - Runtime: `Python 3`
+   - Region: `Singapore` (ใกล้ไทย)
+   - Build Command: `./build.sh`
+   - Start Command: `gunicorn config.wsgi:application`
+   - Plan: **Free**
+3. **Environment Variables** กด Add:
+   - `PYTHON_VERSION` = `3.12.8`
+   - `SECRET_KEY` = กด Generate
+   - `DEBUG` = `False`
+   - `DATABASE_URL` = วาง Internal Database URL จากข้อ 2 (หรือกด Add -> Database -> employee-hub-db)
+   - ไม่ต้องใส่ `ALLOWED_HOSTS` / `CSRF_TRUSTED_ORIGINS` เอง - `settings.py` อ่าน `RENDER_EXTERNAL_HOSTNAME` ให้แล้ว
+4. กด **Create Web Service**
+
+### 4. ดู Logs
+ต้องเห็น:
 ```
 pip install -r requirements.txt
-collectstatic -> 131 static files copied
-migrate -> Applying employees.0001_initial OK
-created admin/1234 หรือ admin password reset to 1234
+131 static files copied
+Applying employees.0001_initial OK
+admin password reset to 1234 / created admin/1234
 ```
-- ถ้า error `ModuleNotFoundError` = `requirements.txt` ไม่ได้ install -> เช็ค `PYTHON_VERSION 3.12.8`
-- ถ้า error `CSRF` ตอน login = `CSRF_TRUSTED_ORIGINS` ยังไม่ตั้ง -> เช็คว่า push ล่าสุดแล้ว
+ถ้า `no such table` = `migrate` ยังไม่รัน -> เข้า Shell รัน `python manage.py migrate`
 
-## 4. เปิดเว็บ + ทดสอบ
-- URL: `https://employee-hub-kpru.onrender.com` (ดูใน Dashboard -> service URL)
-- Login: `admin` / `1234`
-- Smoke test:
-  - [ ] Dashboard โหลดได้
-  - [ ] เพิ่มพนักงานใหม่ (ใส่รูปได้)
-  - [ ] แก้ไข / ลบ / ค้นหา (q, department, status)
-  - [ ] Logout แล้ว login ใหม่ได้
-- หมายเหตุ: รูปที่อัปโหลดเก็บใน `media/` บน disk ชั่วคราว -> **redeploy แล้วรูปหาย** (ตาม Q6 รับได้สำหรับทดสอบ) ถ้าจะเก็บถาวรต้องย้ายไป S3/Cloudinary ภายหลัง
-
-## 5. ถ้า Deploy ไม่ผ่าน
-- **Logs** ดูบรรทัดแดงแรกสุด
-- **Manual Deploy** -> Clear build cache & Deploy
-- เช็ค ENV ใน Dashboard -> Environment: `DEBUG=False`, `SECRET_KEY` auto-generated, `DATABASE_URL` linked จาก `employee-hub-db`
-- สั่ง migrate เองผ่าน Render Shell: `python manage.py migrate` หรือ `python manage.py createsuperuser`
-
-## 6. เปลี่ยนรหัส admin ภายหลัง (แนะนำ)
-- Render Shell: `python manage.py shell`
-```python
-from django.contrib.auth import get_user_model
-u=get_user_model().objects.get(username='admin')
-u.set_password('รหัสใหม่ที่ปลอดภัย')
-u.save()
-```
-- หรือแก้ `build.sh` ให้ใช้ ENV แล้ว redeploy
+### 5. ทดสอบ
+- URL: `https://employee-hub-kpru.onrender.com` (ดูบน Dashboard)
+- Login `admin` / `1234`
+- [ ] เพิ่มพนักงาน -> บันทึกได้ | [ ] แก้ไข/ลบ/ค้นหา | [ ] อัปรูป
+- รูปใน `media/` จะหายเมื่อ redeploy (รับได้สำหรับทดสอบ)
 
 ---
-Push ล่าสุด: `git log --oneline -1` ต้องเป็น `00dd7cc` | Build: `./build.sh` idempotent | Prod: `DEBUG=False` + `CSRF_TRUSTED_ORIGINS`
+
+## วิธี B: Blueprint (ต้องมีบัตรเครดิต)
+1. New+ -> **Blueprint** -> Connect repo -> Render อ่าน `render.yaml` (web + db)
+2. Apply -> รอสร้างคู่
+> ถ้าขอบัตร -> ใช้วิธี A แทน `render.yaml` จะถูกข้ามไป
+
+---
+
+## แก้ปัญหา
+- **500 ตอน login** -> เช็ค `CSRF` -> ต้อง push ล่าสุดที่มี `CSRF_TRUSTED_ORIGINS` แล้ว redeploy
+- **Build fail** -> ดูบรรทัดแดงแรก, ลอง Clear cache & Deploy
+- **DB ต่อไม่ติด** -> เช็ค `DATABASE_URL` ใน Web Service ว่าลิงก์กับ `employee-hub-db` แล้ว
+- **อยากเปลี่ยนรหัส admin**: Render Shell -> `python manage.py shell`
+```python
+from django.contrib.auth import get_user_model
+u=get_user_model().objects.get(username='admin'); u.set_password('รหัสใหม่'); u.save()
+```
+
+---
+ล่าสุด: `build.sh` idempotent + `DEBUG=False` + `CSRF_TRUSTED_ORIGINS` | ทดสอบ local `py manage.py check` + `collectstatic` ผ่าน
