@@ -7,19 +7,27 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .forms import EmployeeForm, SignupForm
 from .models import Employee
 
+# วิวสมัครสมาชิก - เปิดให้ทุกคนสมัครเองได้ ไม่ต้องแอดมินอนุมัติ
+# GET: แสดงฟอร์มสมัคร, POST: บันทึก user ใหม่ -> เด้งไปหน้า login
 def signup(request):
+    # ถ้าล็อกอินอยู่แล้ว ไม่ต้องสมัครซ้ำ -> ไป dashboard เลย
     if request.user.is_authenticated:
         return redirect("dashboard")
     if request.method == "POST":
+        # รับข้อมูลจากฟอร์มสมัคร
         form = SignupForm(request.POST)
         if form.is_valid():
+            # บันทึกผู้ใช้ใหม่ลงฐานข้อมูล
             form.save()
+            # แจ้งสำเร็จ -> ให้ไปล็อกอินเอง (ไม่ auto-login)
             messages.success(request, "สมัครสมาชิกสำเร็จ กรุณาเข้าสู่ระบบ")
             return redirect("login")
     else:
+        # แสดงฟอร์มเปล่า
         form = SignupForm()
     return render(request, "registration/signup.html", {"form": form})
 
+# หน้าแดชบอร์ด - ต้องล็อกอินก่อน
 @login_required
 def dashboard(request):
     employees = Employee.objects.all()
@@ -32,6 +40,7 @@ def dashboard(request):
     }
     return render(request, "employees/dashboard.html", context)
 
+# หน้ารายชื่อพนักงาน - ค้นหา/กรอง/แบ่งหน้า
 @login_required
 def employee_list(request):
     query = request.GET.get("q", "").strip()
@@ -66,6 +75,7 @@ def employee_list(request):
         "status_choices": Employee.STATUS_CHOICES,
     })
 
+# เพิ่มพนักงานใหม่
 @login_required
 def employee_create(request):
     if request.method == "POST":
@@ -78,11 +88,13 @@ def employee_create(request):
         form = EmployeeForm()
     return render(request, "employees/form.html", {"form": form, "title": "เพิ่มพนักงานใหม่", "button_text": "บันทึกข้อมูล"})
 
+# ดูรายละเอียดพนักงาน
 @login_required
 def employee_detail(request, pk):
     employee = get_object_or_404(Employee, pk=pk)
     return render(request, "employees/detail.html", {"employee": employee})
 
+# แก้ไขข้อมูลพนักงาน
 @login_required
 def employee_update(request, pk):
     employee = get_object_or_404(Employee, pk=pk)
@@ -96,6 +108,7 @@ def employee_update(request, pk):
         form = EmployeeForm(instance=employee)
     return render(request, "employees/form.html", {"form": form, "title": "แก้ไขข้อมูลพนักงาน", "button_text": "บันทึกการแก้ไข", "employee": employee})
 
+# ลบพนักงาน
 @login_required
 def employee_delete(request, pk):
     employee = get_object_or_404(Employee, pk=pk)

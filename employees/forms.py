@@ -4,7 +4,11 @@ from django.contrib.auth.models import User
 
 from .models import Employee
 
+# ฟอร์มสมัครสมาชิก - เปิดให้ทุกคนสมัครเองได้
+# ฟิลด์: ชื่อผู้ใช้, อีเมล, รหัสผ่าน + ยืนยันรหัสผ่าน
+# ตรวจสอบ: อีเมลต้องไม่ซ้ำในระบบ
 class SignupForm(UserCreationForm):
+    # ช่องอีเมล - บังคับกรอก และต้องไม่ซ้ำ
     email = forms.EmailField(required=True, label="อีเมล", widget=forms.EmailInput(attrs={"placeholder": "email@example.com"}))
 
     class Meta:
@@ -17,12 +21,14 @@ class SignupForm(UserCreationForm):
             "username": "ชื่อผู้ใช้",
         }
 
+    # ตรวจสอบอีเมลซ้ำ - ป้องกันสมัครซ้ำด้วยอีเมลเดิม
     def clean_email(self):
         email = self.cleaned_data.get("email")
         if email and User.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError("อีเมลนี้ถูกใช้งานแล้ว")
         return email
 
+# ฟอร์มจัดการข้อมูลพนักงาน
 class EmployeeForm(forms.ModelForm):
     class Meta:
         model = Employee
