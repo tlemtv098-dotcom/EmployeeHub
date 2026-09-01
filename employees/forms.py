@@ -1,5 +1,27 @@
-from django import forms
+﻿from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+
 from .models import Employee
+
+class SignupForm(UserCreationForm):
+    email = forms.EmailField(required=True, label="อีเมล", widget=forms.EmailInput(attrs={"placeholder": "email@example.com"}))
+
+    class Meta:
+        model = User
+        fields = ("username", "email")
+        widgets = {
+            "username": forms.TextInput(attrs={"placeholder": "ชื่อผู้ใช้"}),
+        }
+        labels = {
+            "username": "ชื่อผู้ใช้",
+        }
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if email and User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError("อีเมลนี้ถูกใช้งานแล้ว")
+        return email
 
 class EmployeeForm(forms.ModelForm):
     class Meta:

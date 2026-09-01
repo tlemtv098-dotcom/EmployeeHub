@@ -1,11 +1,24 @@
-from django.contrib import messages
+﻿from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import EmployeeForm
+from .forms import EmployeeForm, SignupForm
 from .models import Employee
+
+def signup(request):
+    if request.user.is_authenticated:
+        return redirect("dashboard")
+    if request.method == "POST":
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "สมัครสมาชิกสำเร็จ กรุณาเข้าสู่ระบบ")
+            return redirect("login")
+    else:
+        form = SignupForm()
+    return render(request, "registration/signup.html", {"form": form})
 
 @login_required
 def dashboard(request):

@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!doctype html>
 <html lang="th">
 <head>
@@ -12,7 +12,10 @@
 <body class="login-page">
 <div class="login-card">
     <div class="login-brand"><div class="brand-mark">EH</div><h1>EmployeeHub</h1></div>
-    <p class="login-subtitle">เข้าสู่ระบบจัดการข้อมูลพนักงาน</p>
+    <p class="login-subtitle">เข้าสู่ระบบจัดการพนักงาน</p>
+    {% if messages %}
+        {% for message in messages %}<div class="alert" style="background:#e6f4ea;color:#137333;border:1px solid #a8dab5">{{ message }}</div>{% endfor %}
+    {% endif %}
     {% if form.errors %}<div class="alert">ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง</div>{% endif %}
     <form method="post">
         {% csrf_token %}
@@ -22,6 +25,7 @@
         <input type="password" name="password" required>
         <button class="primary-btn full" type="submit">เข้าสู่ระบบ</button>
     </form>
+    <p style="margin-top:16px;text-align:center;font-size:14px">ยังไม่มีบัญชี? <a href="{% url 'signup' %}" style="color:#1a73e8;font-weight:500">สมัครสมาชิก</a></p>
 </div>
 </body>
 </html>

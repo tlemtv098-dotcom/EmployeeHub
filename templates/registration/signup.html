@@ -1,0 +1,30 @@
+﻿{% load static %}
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>สมัครสมาชิก | EmployeeHub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body class="login-page">
+<div class="login-card">
+    <div class="login-brand"><div class="brand-mark">EH</div><h1>EmployeeHub</h1></div>
+    <p class="login-subtitle">สมัครสมาชิกใหม่</p>
+    {% if form.errors %}<div class="alert">กรุณาตรวจสอบข้อมูลให้ถูกต้อง</div>{% endif %}
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <label>{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}<small style="color:#d93025">{{ field.errors|striptags }}</small>{% endif %}
+            {% if field.help_text %}<small style="color:#666;display:block;margin-bottom:8px">{{ field.help_text }}</small>{% endif %}
+        {% endfor %}
+        <button class="primary-btn full" type="submit" style="margin-top:12px">สมัครสมาชิก</button>
+    </form>
+    <p style="margin-top:16px;text-align:center;font-size:14px">มีบัญชีแล้ว? <a href="{% url 'login' %}" style="color:#1a73e8;font-weight:500">เข้าสู่ระบบ</a></p>
+</div>
+</body>
+</html>
