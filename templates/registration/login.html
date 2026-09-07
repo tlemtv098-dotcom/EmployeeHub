@@ -16,16 +16,21 @@
     {% if messages %}
         {% for message in messages %}<div class="alert" style="background:#e6f4ea;color:#137333;border:1px solid #a8dab5">{{ message }}</div>{% endfor %}
     {% endif %}
-    {% if form.errors %}<div class="alert">ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง</div>{% endif %}
-    <form method="post">
+    {% if form.errors %}<div class="alert">ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง กรุณาลองใหม่</div>{% endif %}
+    <form method="post" novalidate>
         {% csrf_token %}
-        <label>ชื่อผู้ใช้</label>
-        <input type="text" name="username" autofocus required>
-        <label>รหัสผ่าน</label>
-        <input type="password" name="password" required>
+        <div class="field-group">
+            <label for="id_username">ชื่อผู้ใช้</label>
+            <input type="text" name="username" id="id_username" placeholder="กรอกชื่อผู้ใช้" autofocus required>
+        </div>
+        <div class="field-group">
+            <label for="id_password">รหัสผ่าน</label>
+            <input type="password" name="password" id="id_password" placeholder="กรอกรหัสผ่าน" required>
+        </div>
         <button class="primary-btn full" type="submit">เข้าสู่ระบบ</button>
     </form>
-    <p style="margin-top:16px;text-align:center;font-size:14px">ยังไม่มีบัญชี? <a href="{% url 'signup' %}" style="color:#1a73e8;font-weight:500">สมัครสมาชิก</a></p>
+    <p style="margin-top:20px;text-align:center;font-size:14px;line-height:1.6">ยังไม่มีบัญชี? <a href="{% url 'signup' %}" style="color:#2563eb;font-weight:600;text-decoration:none">สมัครสมาชิก</a></p>
+    <p style="text-align:center;font-size:11px;color:#94a3b8;margin-top:8px;line-height:1.5">ระบบปลอดภัยด้วย Django Auth • เข้ารหัสแล้ว</p>
 </div>
 </body>
 </html>

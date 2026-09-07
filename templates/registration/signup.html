@@ -10,46 +10,49 @@
 <link rel="stylesheet" href="{% static 'css/app.css' %}">
 </head>
 <body class="login-page">
-<!-- หน้าสมัครสมาชิก - ภาษาไทยทั้งหมด เข้าใจง่าย -->
-<div class="login-card">
+<div class="login-card signup">
     <div class="login-brand"><div class="brand-mark">EH</div><h1>EmployeeHub</h1></div>
-    <p class="login-subtitle">สร้างบัญชีใหม่เพื่อเข้าใช้งานระบบ</p>
-    <p style="font-size:13px;color:#5f6368;text-align:center;margin-top:-8px;margin-bottom:12px">กรอกข้อมูลให้ครบ ทุกช่องต้องเป็นภาษาไทยเข้าใจง่าย</p>
+    <p class="login-subtitle">สร้างบัญชีใหม่ เพื่อเข้าใช้งานระบบ</p>
+    <p style="font-size:12px;color:#64748b;text-align:center;margin:-12px 0 20px;line-height:1.6">กรอกข้อมูลให้ครบ ทุกช่องต้องเป็นภาษาไทย เข้าใจง่าย</p>
 
     {% if form.non_field_errors %}<div class="alert">{{ form.non_field_errors|striptags }}</div>{% endif %}
 
     <form method="post" novalidate>
         {% csrf_token %}
 
-        <!-- ชื่อผู้ใช้ -->
-        <label for="{{ form.username.id_for_label }}">{{ form.username.label }} <span style="color:#d93025">*</span></label>
-        {{ form.username }}
-        {% if form.username.errors %}<small style="color:#d93025">{{ form.username.errors|striptags }}</small>{% endif %}
-        <small style="color:#666;display:block;margin-bottom:10px">{{ form.username.help_text }}</small>
+        <div class="field-group">
+            <label for="{{ form.username.id_for_label }}">{{ form.username.label }} <span style="color:#dc2626">*</span></label>
+            {{ form.username }}
+            {% if form.username.errors %}<small style="color:#dc2626">{{ form.username.errors|striptags }}</small>{% endif %}
+            <small style="color:#64748b">{{ form.username.help_text }}</small>
+        </div>
 
-        <!-- อีเมล -->
-        <label for="{{ form.email.id_for_label }}">{{ form.email.label }} <span style="color:#d93025">*</span></label>
-        {{ form.email }}
-        {% if form.email.errors %}<small style="color:#d93025">{{ form.email.errors|striptags }}</small>{% endif %}
-        <small style="color:#666;display:block;margin-bottom:10px">{{ form.email.help_text }}</small>
+        <div class="field-group">
+            <label for="{{ form.email.id_for_label }}">{{ form.email.label }} <span style="color:#dc2626">*</span></label>
+            {{ form.email }}
+            {% if form.email.errors %}<small style="color:#dc2626">{{ form.email.errors|striptags }}</small>{% endif %}
+            <small style="color:#64748b">{{ form.email.help_text }}</small>
+        </div>
 
-        <!-- รหัสผ่าน -->
-        <label for="{{ form.password1.id_for_label }}">{{ form.password1.label }} <span style="color:#d93025">*</span></label>
-        {{ form.password1 }}
-        {% if form.password1.errors %}<small style="color:#d93025">{{ form.password1.errors|striptags }}</small>{% endif %}
-        <small style="color:#666;display:block;margin-bottom:10px">{{ form.password1.help_text }}</small>
+        <div class="field-group">
+            <label for="{{ form.password1.id_for_label }}">{{ form.password1.label }} <span style="color:#dc2626">*</span></label>
+            {{ form.password1 }}
+            {% if form.password1.errors %}<small style="color:#dc2626">{{ form.password1.errors|striptags }}</small>{% endif %}
+            <small style="color:#64748b">{{ form.password1.help_text }}</small>
+        </div>
 
-        <!-- ยืนยันรหัสผ่าน -->
-        <label for="{{ form.password2.id_for_label }}">{{ form.password2.label }} <span style="color:#d93025">*</span></label>
-        {{ form.password2 }}
-        {% if form.password2.errors %}<small style="color:#d93025">{{ form.password2.errors|striptags }}</small>{% endif %}
-        <small style="color:#666;display:block;margin-bottom:10px">{{ form.password2.help_text }}</small>
+        <div class="field-group">
+            <label for="{{ form.password2.id_for_label }}">{{ form.password2.label }} <span style="color:#dc2626">*</span></label>
+            {{ form.password2 }}
+            {% if form.password2.errors %}<small style="color:#dc2626">{{ form.password2.errors|striptags }}</small>{% endif %}
+            <small style="color:#64748b">{{ form.password2.help_text }}</small>
+        </div>
 
-        <button class="primary-btn full" type="submit" style="margin-top:14px">สมัครสมาชิก</button>
+        <button class="primary-btn full" type="submit" style="margin-top:8px">สมัครสมาชิก</button>
     </form>
 
-    <p style="margin-top:16px;text-align:center;font-size:14px">มีบัญชีแล้ว? <a href="{% url 'login' %}" style="color:#1a73e8;font-weight:500">เข้าสู่ระบบที่นี่</a></p>
-    <p style="text-align:center;font-size:12px;color:#888;margin-top:8px">สมัครฟรี ใช้งานได้ทันทีหลังสมัคร</p>
+    <p style="margin-top:18px;text-align:center;font-size:14px;line-height:1.6">มีบัญชีแล้ว? <a href="{% url 'login' %}" style="color:#2563eb;font-weight:600;text-decoration:none">เข้าสู่ระบบที่นี่</a></p>
+    <p style="text-align:center;font-size:11px;color:#94a3b8;margin-top:6px;line-height:1.5">สมัครฟรี ใช้งานได้ทันที • ข้อมูลปลอดภัย</p>
 </div>
 </body>
 </html>
