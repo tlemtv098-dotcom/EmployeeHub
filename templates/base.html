@@ -32,6 +32,9 @@
                 <span>＋</span> เพิ่มพนักงาน
             </a>
             <a href="/admin/"><span>⚙</span> ผู้ดูแลระบบ</a>
+            <a href="{% url 'profile' %}" class="{% if 'profile' in request.resolver_match.url_name %}active{% endif %}">
+                <span>☺</span> โปรไฟล์ของฉัน
+            </a>
         </nav>
 
         <div class="sidebar-bottom">

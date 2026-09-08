@@ -73,6 +73,8 @@ URL เช่น `https://employee-hub-kpru.onrender.com` -> Login `admin` / `12
 
 **คู่มือละเอียด:** ดู `docs/DEPLOY_RENDER.md`
 
+**รายงานโครงสร้างระบบ (Word ภาษาไทย 8–10 หน้า):** ดู `docs/EmployeeHub_รายงานโครงสร้างระบบ.docx` (สำเนาเดียวกับไฟล์บน Desktop)
+
 ## Deploy แบบ Blueprint (ต้องมีบัตร)
 New+ -> **Blueprint** -> เลือก repo -> Render อ่าน `render.yaml` สร้าง web+db ให้อัตโนมัติ -> Apply
 

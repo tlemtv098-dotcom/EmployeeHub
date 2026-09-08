@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}ไม่มีสิทธิ์เข้าถึง | EmployeeHub{% endblock %}
+{% block heading %}ไม่มีสิทธิ์เข้าถึง{% endblock %}
+{% block content %}
+<div class="panel confirm-panel">
+    <div class="warning-icon">!</div>
+    <h2>ขออภัย คุณไม่มีสิทธิ์ทำรายการนี้</h2>
+    <p>เฉพาะผู้ดูแลระบบ (แอดมิน) เท่านั้นที่แก้ไขหรือลบข้อมูลพนักงานได้</p>
+    <a class="outline-btn" href="{% url 'employee_list' %}">กลับไปหน้ารายชื่อพนักงาน</a>
+</div>
+{% endblock %}

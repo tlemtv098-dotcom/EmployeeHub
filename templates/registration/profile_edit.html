@@ -1,0 +1,57 @@
+{% load static %}
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>แก้ไขโปรไฟล์ | EmployeeHub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body class="login-page">
+<div class="login-card signup">
+    <div class="login-brand"><div class="brand-mark">EH</div><h1>EmployeeHub</h1></div>
+    <p class="login-subtitle">แก้ไขข้อมูลโปรไฟล์</p>
+    <p style="font-size:12px;color:#64748b;text-align:center;margin:-12px 0 20px;line-height:1.6">แก้ไขข้อมูลส่วนตัวของคุณ แล้วกดบันทึก</p>
+
+    {% if form.non_field_errors %}<div class="alert">{{ form.non_field_errors|striptags }}</div>{% endif %}
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        <div class="field-group">
+            <label for="{{ form.username.id_for_label }}">{{ form.username.label }} <span style="color:#dc2626">*</span></label>
+            {{ form.username }}
+            {% if form.username.errors %}<small style="color:#dc2626">{{ form.username.errors|striptags }}</small>{% endif %}
+            <small style="color:#64748b">{{ form.username.help_text }}</small>
+        </div>
+
+        <div class="field-group">
+            <label for="{{ form.email.id_for_label }}">{{ form.email.label }} <span style="color:#dc2626">*</span></label>
+            {{ form.email }}
+            {% if form.email.errors %}<small style="color:#dc2626">{{ form.email.errors|striptags }}</small>{% endif %}
+            <small style="color:#64748b">{{ form.email.help_text }}</small>
+        </div>
+
+        <div class="field-group">
+            <label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
+            {{ form.first_name }}
+            {% if form.first_name.errors %}<small style="color:#dc2626">{{ form.first_name.errors|striptags }}</small>{% endif %}
+            <small style="color:#64748b">{{ form.first_name.help_text }}</small>
+        </div>
+
+        <div class="field-group">
+            <label for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }}</label>
+            {{ form.last_name }}
+            {% if form.last_name.errors %}<small style="color:#dc2626">{{ form.last_name.errors|striptags }}</small>{% endif %}
+            <small style="color:#64748b">{{ form.last_name.help_text }}</small>
+        </div>
+
+        <button class="primary-btn full" type="submit" style="margin-top:8px">บันทึกข้อมูล</button>
+    </form>
+
+    <p style="margin-top:18px;text-align:center;font-size:14px;line-height:1.6"><a href="{% url 'profile' %}" style="color:#2563eb;font-weight:600;text-decoration:none">ยกเลิก กลับไปหน้าโปรไฟล์</a></p>
+</div>
+</body>
+</html>

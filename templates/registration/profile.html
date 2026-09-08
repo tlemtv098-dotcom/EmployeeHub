@@ -1,0 +1,47 @@
+{% load static %}
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>โปรไฟล์ของฉัน | EmployeeHub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body class="login-page">
+<div class="login-card signup">
+    <div class="login-brand"><div class="brand-mark">EH</div><h1>EmployeeHub</h1></div>
+    <p class="login-subtitle">ข้อมูลโปรไฟล์ของฉัน</p>
+    <p style="font-size:12px;color:#64748b;text-align:center;margin:-12px 0 20px;line-height:1.6">ข้อมูลบัญชีผู้ใช้ของคุณในระบบ</p>
+
+    {% if messages %}
+        {% for message in messages %}<div class="alert" style="background:#e6f4ea;color:#137333;border:1px solid #a8dab5">{{ message }}</div>{% endfor %}
+    {% endif %}
+
+    <div class="field-group">
+        <label>ชื่อผู้ใช้</label>
+        <p style="font-size:15px;line-height:1.6;margin:0">{{ user.username }}</p>
+    </div>
+
+    <div class="field-group">
+        <label>อีเมล</label>
+        <p style="font-size:15px;line-height:1.6;margin:0">{{ user.email|default:"— ยังไม่ได้กรอก —" }}</p>
+    </div>
+
+    <div class="field-group">
+        <label>ชื่อจริง</label>
+        <p style="font-size:15px;line-height:1.6;margin:0">{{ user.first_name|default:"— ยังไม่ได้กรอก —" }}</p>
+    </div>
+
+    <div class="field-group">
+        <label>นามสกุล</label>
+        <p style="font-size:15px;line-height:1.6;margin:0">{{ user.last_name|default:"— ยังไม่ได้กรอก —" }}</p>
+    </div>
+
+    <a class="primary-btn full" href="{% url 'profile_edit' %}" style="display:block;text-align:center;text-decoration:none;margin-top:8px;line-height:1.6">แก้ไขโปรไฟล์</a>
+
+    <p style="margin-top:18px;text-align:center;font-size:14px;line-height:1.6"><a href="{% url 'dashboard' %}" style="color:#2563eb;font-weight:600;text-decoration:none">กลับไปหน้าหลัก</a></p>
+</div>
+</body>
+</html>

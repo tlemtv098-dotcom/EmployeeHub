@@ -1,11 +1,16 @@
 ﻿from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import EmployeeForm, SignupForm
+from .forms import EmployeeForm, ProfileForm, SignupForm
 from .models import Employee
+
+# เช็กแอดมิน: staff หรือ superuser เท่านั้น (เช่น admin/1234)
+def _is_admin(user):
+    return user.is_authenticated and (user.is_staff or user.is_superuser)
 
 # วิวสมัครสมาชิก - เปิดให้ทุกคนสมัครเองได้ ไม่ต้องแอดมินอนุมัติ
 # GET: แสดงฟอร์มสมัคร, POST: บันทึก user ใหม่ -> เด้งไปหน้า login
@@ -18,7 +23,13 @@ def signup(request):
         form = SignupForm(request.POST)
         if form.is_valid():
             # บันทึกผู้ใช้ใหม่ลงฐานข้อมูล
-            form.save()
+            user = form.save()
+            # สมัครใหม่เข้า Group Member อัตโนมัติ (ดู/เพิ่มพนักงานได้)
+            try:
+                member_group, _ = Group.objects.get_or_create(name="Member")
+                user.groups.add(member_group)
+            except Exception:
+                pass
             # แจ้งสำเร็จ -> ให้ไปล็อกอินเอง (ไม่ auto-login)
             messages.success(request, "สมัครสมาชิกสำเร็จ กรุณาเข้าสู่ระบบ")
             return redirect("login")
@@ -94,9 +105,11 @@ def employee_detail(request, pk):
     employee = get_object_or_404(Employee, pk=pk)
     return render(request, "employees/detail.html", {"employee": employee})
 
-# แก้ไขข้อมูลพนักงาน
+# แก้ไขข้อมูลพนักงาน - เฉพาะแอดมิน/staff (Member เจอ 403 ภาษาไทย)
 @login_required
 def employee_update(request, pk):
+    if not _is_admin(request.user):
+        return render(request, "403.html", status=403)
     employee = get_object_or_404(Employee, pk=pk)
     if request.method == "POST":
         form = EmployeeForm(request.POST, request.FILES, instance=employee)
@@ -108,9 +121,29 @@ def employee_update(request, pk):
         form = EmployeeForm(instance=employee)
     return render(request, "employees/form.html", {"form": form, "title": "แก้ไขข้อมูลพนักงาน", "button_text": "บันทึกการแก้ไข", "employee": employee})
 
-# ลบพนักงาน
+# ดูโปรไฟล์ตัวเอง - ต้องล็อกอินก่อน
+@login_required
+def profile(request):
+    return render(request, "registration/profile.html")
+
+# แก้ไขโปรไฟล์ตัวเอง - GET แสดงฟอร์ม, POST บันทึกแล้วเด้งไปหน้าโปรไฟล์
+@login_required
+def profile_edit(request):
+    if request.method == "POST":
+        form = ProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "บันทึกข้อมูลโปรไฟล์เรียบร้อยแล้ว")
+            return redirect("profile")
+    else:
+        form = ProfileForm(instance=request.user)
+    return render(request, "registration/profile_edit.html", {"form": form})
+
+# ลบพนักงาน - เฉพาะแอดมิน/staff (Member เจอ 403 ภาษาไทย)
 @login_required
 def employee_delete(request, pk):
+    if not _is_admin(request.user):
+        return render(request, "403.html", status=403)
     employee = get_object_or_404(Employee, pk=pk)
     if request.method == "POST":
         name = employee.full_name

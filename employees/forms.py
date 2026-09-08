@@ -57,6 +57,49 @@ class SignupForm(UserCreationForm):
             raise forms.ValidationError("อีเมลนี้ถูกใช้งานแล้ว กรุณาใช้อีเมลอื่น")
         return email
 
+# ฟอร์มดู/แก้ไขโปรไฟล์ตัวเอง - ภาษาไทยทั้งหมด
+# ฟิลด์: ชื่อผู้ใช้, อีเมล, ชื่อจริง, นามสกุล
+# ตรวจสอบ: อีเมลต้องไม่ซ้ำ ยกเว้นอีเมลของตัวเอง
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ("username", "email", "first_name", "last_name")
+        widgets = {
+            "username": forms.TextInput(attrs={"placeholder": "ชื่อผู้ใช้ ภาษาอังกฤษ ไม่มีช่องว่าง"}),
+            "email": forms.EmailInput(attrs={"placeholder": "อีเมลของคุณ"}),
+            "first_name": forms.TextInput(attrs={"placeholder": "เช่น สมชาย"}),
+            "last_name": forms.TextInput(attrs={"placeholder": "เช่น ใจดี"}),
+        }
+        labels = {
+            "username": "ชื่อผู้ใช้",
+            "email": "อีเมล",
+            "first_name": "ชื่อจริง",
+            "last_name": "นามสกุล",
+        }
+        help_texts = {
+            "username": "ไม่เกิน 150 ตัวอักษร ใช้ได้เฉพาะ ตัวอักษร ตัวเลข และ @/./+/-/_",
+            "email": "กรอกอีเมลที่ใช้งานได้จริง เช่น name@example.com",
+            "first_name": "ชื่อจริงของคุณ (ไม่บังคับ)",
+            "last_name": "นามสกุลของคุณ (ไม่บังคับ)",
+        }
+        error_messages = {
+            "username": {
+                "required": "กรุณากรอกชื่อผู้ใช้",
+                "unique": "ชื่อผู้ใช้นี้ถูกใช้งานแล้ว",
+            },
+            "email": {
+                "required": "กรุณากรอกอีเมล",
+                "invalid": "รูปแบบอีเมลไม่ถูกต้อง",
+            },
+        }
+
+    # ตรวจสอบอีเมลซ้ำ - ยกเว้นอีเมลของตัวเอง
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if email and User.objects.filter(email__iexact=email).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError("อีเมลนี้ถูกใช้งานแล้ว กรุณาใช้อีเมลอื่น")
+        return email
+
 # ฟอร์มจัดการข้อมูลพนักงาน
 class EmployeeForm(forms.ModelForm):
     class Meta:
