@@ -74,7 +74,7 @@ def employee_list(request):
     if status:
         employees = employees.filter(status=status)
 
-    paginator = Paginator(employees, 8)
+    paginator = Paginator(employees, 4)
     page_obj = paginator.get_page(request.GET.get("page"))
 
     return render(request, "employees/list.html", {
